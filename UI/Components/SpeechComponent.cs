@@ -37,13 +37,13 @@ namespace LiveSplit.UI.Components
             //Player = new MediaPlayer.MediaPlayer();
             Activated = true;
 
-            State.OnStart += State_OnStart;
+            //State.OnStart += State_OnStart;
             State.OnSplit += State_OnSplit;
-            State.OnSkipSplit += State_OnSkipSplit;
-            State.OnUndoSplit += State_OnUndoSplit;
-            State.OnPause += State_OnPause;
-            State.OnResume += State_OnResume;
-            State.OnReset += State_OnReset;
+            //State.OnSkipSplit += State_OnSkipSplit;
+            //State.OnUndoSplit += State_OnUndoSplit;
+            //State.OnPause += State_OnPause;
+            //State.OnResume += State_OnResume;
+            //State.OnReset += State_OnReset;
         }
 
         void State_OnReset(object sender, TimerPhase e)
