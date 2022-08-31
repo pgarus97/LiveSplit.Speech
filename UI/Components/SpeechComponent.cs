@@ -20,7 +20,7 @@ namespace LiveSplit.UI.Components
     {
         public LiveSplitState State { get; set; }
         //public MediaPlayer.IMediaPlayer Player { get; set; }
-        public SpeechSettings Settings { get; set; }
+        protected SpeechSettings Settings { get; set; }
 
         public bool Activated { get; set; }
 
@@ -32,17 +32,18 @@ namespace LiveSplit.UI.Components
         public SpeechComponent(LiveSplitState state)
         {
             Settings = new SpeechSettings();
+            
             State = state;
             //Player = new MediaPlayer.MediaPlayer();
             Activated = true;
 
-            State.OnStart += State_OnStart;
+            //State.OnStart += State_OnStart;
             State.OnSplit += State_OnSplit;
-            State.OnSkipSplit += State_OnSkipSplit;
-            State.OnUndoSplit += State_OnUndoSplit;
-            State.OnPause += State_OnPause;
-            State.OnResume += State_OnResume;
-            State.OnReset += State_OnReset;
+            //State.OnSkipSplit += State_OnSkipSplit;
+            //State.OnUndoSplit += State_OnUndoSplit;
+            //State.OnPause += State_OnPause;
+            //State.OnResume += State_OnResume;
+            //State.OnReset += State_OnReset;
         }
 
         void State_OnReset(object sender, TimerPhase e)
@@ -75,8 +76,7 @@ namespace LiveSplit.UI.Components
         {
             if (State.CurrentPhase == TimerPhase.Ended)
             {
-                var text = GetSoundTextForLastSplit();
-                PlaySound(text);
+                PlaySound("GG");
             }
             else
             {
@@ -98,70 +98,15 @@ namespace LiveSplit.UI.Components
 
                 if (timeDifference < TimeSpan.Zero)
                 {
-                    text = "You are " + timeDifferenceText + " ahead at " + State.Run[State.CurrentSplitIndex - 1].Name + ". ";
-                    if (previousSegment > TimeSpan.Zero)
-                        text += "You lost " + previousSegmentText + ". ";
-                    else
-                        text += "You gained " + previousSegmentText + ". ";
+                    text = timeDifferenceText + " ahead at " + State.Run[State.CurrentSplitIndex - 1].Name + ". ";
+             
                 }
                 else
                 {
-                    text = "You are " + timeDifferenceText + " behind at " + State.Run[State.CurrentSplitIndex - 1].Name + ". ";
-                    if (previousSegment < TimeSpan.Zero)
-                        text += "You gained " + previousSegmentText + ". ";
-                    else
-                        text += "You lost " + previousSegmentText + ". ";
+                    text = timeDifferenceText + " behind at " + State.Run[State.CurrentSplitIndex - 1].Name + ". ";
+                   
                 }
             }
-            else
-            {
-                text = "You did " + State.Run[State.CurrentSplitIndex - 1].Name  + " in " + FormatTime(State.Run[State.CurrentSplitIndex - 1].SplitTime[State.CurrentTimingMethod].Value) + ". ";
-            }
-            //Check for best segment
-            TimeSpan? curSegment;
-            curSegment = LiveSplitStateHelper.GetLiveSegmentTime(State, splitIndex, State.CurrentTimingMethod);
-            if (curSegment != null)
-            {
-                if (State.Run[splitIndex].BestSegmentTime[State.CurrentTimingMethod] == null || curSegment < State.Run[splitIndex].BestSegmentTime[State.CurrentTimingMethod])
-                    text += "The last segment was a best segment.";
-            }
-            return text;
-        }
-
-        public String GetSoundTextForLastSplit()
-        {
-            var runName = State.Run.GameName + " " + State.Run.CategoryName;
-            if (State.Run.GameName.Length + State.Run.CategoryName.Length == 0)
-                runName = "the run";
-
-            String text = "You did " + runName + " in " + FormatTime(State.Run.Last().SplitTime[State.CurrentTimingMethod].Value) + ". ";
-            var timeDifference = State.Run.Last().SplitTime[State.CurrentTimingMethod] - State.Run.Last().Comparisons[State.CurrentComparison][State.CurrentTimingMethod];
-
-            if (State.Run.Last().PersonalBestSplitTime[State.CurrentTimingMethod] == null
-                || State.Run.Last().SplitTime[State.CurrentTimingMethod] < State.Run.Last().PersonalBestSplitTime[State.CurrentTimingMethod])
-                text += "You got a new Personal Best. ";
-            else
-                text += "You unfortunately did not get a new Personal Best. ";
-
-            if (timeDifference != null)
-            {
-                var timeDifferenceText = FormatTime(timeDifference.Value);
-                if (timeDifference < TimeSpan.Zero)
-                    text += "You improved your run by " + timeDifferenceText + ". ";
-                else
-                    text += "You were behind by " + timeDifferenceText + ". ";
-            }
-
-            //Check for best segment
-            TimeSpan? curSegment;
-            var splitIndex = State.CurrentSplitIndex - 1;
-            curSegment = LiveSplitStateHelper.GetLiveSegmentTime(State, splitIndex, State.CurrentTimingMethod);
-            if (curSegment != null)
-            {
-                if (State.Run[splitIndex].BestSegmentTime[State.CurrentTimingMethod] == null || curSegment < State.Run[splitIndex].BestSegmentTime[State.CurrentTimingMethod])
-                    text += "The last segment was a best segment. ";
-            }
-
             return text;
         }
 
